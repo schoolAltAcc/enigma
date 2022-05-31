@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 
 public class Enigma{
     public static final String caesar = "BCDEFGHIJKLMNOPQRSTUVWXYZA";
+    public static final String abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
 	public static void main(String[] args) throws FileNotFoundException{
 
@@ -92,10 +93,10 @@ public class Enigma{
             }
         	//encrypt or decrypt
         	if(input.contains(">")) {
-        		copy = applyCipher(changeInput.trim(), caesar, displacement); //input trimmed, might be weird compared to other method
+        		copy = applyCipher(changeInput.trim(), abc, displacement); //input trimmed, might be weird compared to other method
                 System.out.println(copy);
         	}else {
-        		copy = unapplyCipher(changeInput.trim(), caesar, displacement);
+        		copy = unapplyCipher(changeInput.trim(), abc, -1*displacement);
                 System.out.println(copy);
         	}
         }else {
@@ -111,16 +112,20 @@ public class Enigma{
         if(base.length() != cipher.length()){
             return "Cipher Size Error";
         }
-
+        int z = 0;
+        if(y < 0) {
+        	z = y;
+        	y=0;
+        }
         for(Character a : input.toCharArray()){
         	if(!Character.isSpaceChar(a)) {
 	            int x = base.indexOf(a);
 	            if(x!= -1){
-	                output += cipher.charAt((x+y)%cipher.length()); 
+	                output += cipher.charAt(((Math.abs((x+z)))%cipher.length()+y)%cipher.length()); 
 	            }
 	            x = lbase.indexOf(a);
 	            if(x!= -1){
-	                output += lcipher.charAt((x+y)%cipher.length()); 
+	                output += lcipher.charAt(((Math.abs((x+z)))%cipher.length()+y)%cipher.length()); 
 	            }
         	}else {
         		output += a;
@@ -142,7 +147,7 @@ public class Enigma{
     }
 
     public static String unapplyCipher(String input, String cipher, int x){
-        return applyCipher(input, cipher , "ABCDEFGHIJKLMNOPQRSTUVWXYZ", x);
+        return applyCipher(input, cipher, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", x);
     }
     
     public static String unapplyCipher(String input, String cipher){
