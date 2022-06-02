@@ -158,18 +158,45 @@ public class Enigma{
     	String output = "";
     	//for every char
     	for(Character c : input.toCharArray()) {
-    		//right hand rotor += 1 shift with logic for passing notch onto next rotors
-	    	//plugboard
-	    	//right rotor
-	    	//middle rotor
-	    	//left rotor
-	    	//reflector
-	    	//left rotor
-	    	//middle rotor
-	    	//right rotor
-	    	//plugboard
+    		Character oChar = c;
+    		if(!Character.isSpaceChar(c)) {
+	    		//right hand rotor += 1 shift with logic for passing notch onto next rotors
+	    		rotorshifts[2]++;
+	    		if(rotorshifts[2]%26 == 0) {
+	    			rotorshifts[1]++;
+	    			rotorshifts[2] = 0;
+	    			if(rotorshifts[1]%26 == 0) {
+						rotorshifts[0]++;
+		    			rotorshifts[1] = 0;
+	    			}
+	    		}
+	    		//plugboard
+	    		oChar = applyPlugboard(plugboard,oChar);
+		    	//right rotor
+	    		oChar = applyRotor(rotors[2],oChar);
+		    	//middle rotor
+	    		oChar = applyRotor(rotors[1],oChar);
+		    	//left rotor
+	    		oChar = applyRotor(rotors[0],oChar);
+		    	//reflector
+		    	//left rotor
+		    	//middle rotor
+		    	//right rotor
+		    	//plugboard
+	    		oChar = applyPlugboard(plugboard,oChar);
+    		}
+    		output += oChar;
     	}
-    	
-    	return "";
+    	return output;
     }
+
+	public static Character applyRotor(String string, Character oChar) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Character applyPlugboard(String[] plugboard, Character oChar) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
