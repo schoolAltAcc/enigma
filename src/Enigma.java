@@ -173,15 +173,19 @@ public class Enigma{
 	    		//plugboard
 	    		oChar = applyPlugboard(plugboard,oChar);
 		    	//right rotor
-	    		oChar = applyRotor(rotors[2],oChar);
+	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]);
 		    	//middle rotor
-	    		oChar = applyRotor(rotors[1],oChar);
+	    		oChar = applyRotor(rotors[1],oChar,rotorshifts[1]);
 		    	//left rotor
-	    		oChar = applyRotor(rotors[0],oChar);
+	    		oChar = applyRotor(rotors[0],oChar,rotorshifts[0]);
 		    	//reflector
+	    		oChar = applyRotor(reflector,oChar,0);
 		    	//left rotor
+	    		oChar = applyRotor(rotors[0],oChar,rotorshifts[0]);
 		    	//middle rotor
+	    		oChar = applyRotor(rotors[1],oChar,rotorshifts[1]);
 		    	//right rotor
+	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]);
 		    	//plugboard
 	    		oChar = applyPlugboard(plugboard,oChar);
     		}
