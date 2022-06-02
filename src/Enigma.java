@@ -153,4 +153,23 @@ public class Enigma{
     public static String unapplyCipher(String input, String cipher){
         return applyCipher(input, cipher , "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     }
+    
+    public static String enigma(String[] rotors, int[] rotorshifts, String[] plugboard, String input) {
+    	String output = "";
+    	//for every char
+    	for(Character c : input.toCharArray()) {
+    		//right hand rotor += 1 shift with logic for passing notch onto next rotors
+	    	//plugboard
+	    	//right rotor
+	    	//middle rotor
+	    	//left rotor
+	    	//reflector
+	    	//left rotor
+	    	//middle rotor
+	    	//right rotor
+	    	//plugboard
+    	}
+    	
+    	return "";
+    }
 }
