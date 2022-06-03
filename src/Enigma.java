@@ -10,9 +10,24 @@ import java.io.FileNotFoundException;
 public class Enigma{
     public static final String caesar = "BCDEFGHIJKLMNOPQRSTUVWXYZA";
     public static final String abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String rotor1 = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+    public static final String rotor2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
+    public static final String rotor3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
+    public static final String rotor4 = "ESOVPZJAYQUIRHXLNFTGKDCMWB";
+    public static final String rotor5 = "VZBRGITYUPSDNHLXAWMJQOFECK";
+    public static final String reflector = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
 	public static void main(String[] args) throws FileNotFoundException{
-
+		String[] rotors = {rotor1,rotor5,rotor3};
+		int[] shifts = {abc.indexOf("C"),abc.indexOf("M"),abc.indexOf("S")};
+		String[] plugboard = {"QA","WS","ED","RF","TG","YH","UJ","IK","OL","MB"};
+		System.out.println(enigma(rotors,shifts,plugboard,"V"));
+		
+		String[] rotors2 = {rotor1,rotor3,rotor2};
+		int[] shifts2 = {abc.indexOf("E"),abc.indexOf("B"),abc.indexOf("C")};
+		String[] plugboard2 = {"AB","CD","EF","GH","IJ","KL","MN","OP","QR","ST"};
+		System.out.println(enigma(rotors2,shifts2,plugboard2,"E"));
+		
         Scanner in = new Scanner(System.in);
         System.out.println("Welcome to Enigma");
         String input = "";
@@ -173,7 +188,7 @@ public class Enigma{
 	    		//plugboard
 	    		oChar = applyPlugboard(plugboard,oChar);
 		    	//right rotor
-	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]);
+	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]); //shift ochar up 3 in abc then down 3 after rotor change in abc
 		    	//middle rotor
 	    		oChar = applyRotor(rotors[1],oChar,rotorshifts[1]);
 		    	//left rotor
@@ -194,13 +209,20 @@ public class Enigma{
     	return output;
     }
 
-	public static Character applyRotor(String string, Character oChar) {
-		// TODO Auto-generated method stub
-		return null;
+	public static Character applyRotor(String rotor, Character oChar, int rotorshifts) {
+		int x = abc.indexOf(oChar);
+		return rotor.charAt((x+rotorshifts)%rotor.length());
 	}
 
 	public static Character applyPlugboard(String[] plugboard, Character oChar) {
-		// TODO Auto-generated method stub
-		return null;
+		Character out = oChar;
+		for(String plug : plugboard) {
+			if(plug.charAt(0) == oChar) {
+				out = plug.charAt(1);
+			}else if(plug.charAt(1)== oChar){
+				out = plug.charAt(0);
+			}
+		}
+		return out;
 	}
 }
