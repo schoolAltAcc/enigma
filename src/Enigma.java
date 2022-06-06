@@ -10,12 +10,13 @@ import java.io.FileNotFoundException;
 public class Enigma{
     public static final String caesar = "BCDEFGHIJKLMNOPQRSTUVWXYZA";
     public static final String abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String cba = "ZYXWVUTSRQPONMLKJIHGFEDCBA";
     public static final String rotor1 = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
     public static final String rotor2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
     public static final String rotor3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
     public static final String rotor4 = "ESOVPZJAYQUIRHXLNFTGKDCMWB";
     public static final String rotor5 = "VZBRGITYUPSDNHLXAWMJQOFECK";
-    public static final String reflector = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String reflector = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		String[] rotors = {rotor1,rotor5,rotor3};
@@ -210,8 +211,13 @@ public class Enigma{
     }
 
 	public static Character applyRotor(String rotor, Character oChar, int rotorshifts) {
-		int x = abc.indexOf(oChar);
-		return rotor.charAt((x+rotorshifts)%rotor.length());
+		//up rotor shift letter acording to abc
+		int x = (abc.indexOf(oChar)+rotorshifts)%abc.length();
+		//letter through rotor
+		oChar = rotor.charAt(x);
+		//letter down shift through abc
+		oChar = cba.charAt((cba.indexOf(oChar)+rotorshifts)%cba.length());
+		return oChar;
 	}
 
 	public static Character applyPlugboard(String[] plugboard, Character oChar) {
