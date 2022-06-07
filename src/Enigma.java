@@ -1,7 +1,7 @@
 //Artem S.
 //Period 7
 //Computer Science A
-//Enigma checkpoint 1
+//Enigma checkpoint 4
 
 import java.util.Scanner;
 import java.io.File;
@@ -24,6 +24,7 @@ public class Enigma{
 		String[] plugboard = {"QA","WS","ED","RF","TG","YH","UJ","IK","OL","MB"};
 		System.out.println(enigma(rotors,shifts,plugboard,"V"));
 		
+		// I III II E B C AB CD EF GH IJ KL MN OP QR ST E
 		String[] rotors2 = {rotor1,rotor3,rotor2};
 		int[] shifts2 = {abc.indexOf("E"),abc.indexOf("B"),abc.indexOf("C")};
 		String[] plugboard2 = {"AB","CD","EF","GH","IJ","KL","MN","OP","QR","ST"};
@@ -112,10 +113,66 @@ public class Enigma{
         		copy = applyCipher(changeInput.trim(), abc, displacement); //input trimmed, might be weird compared to other method
                 System.out.println(copy);
         	}else {
-        		copy = unapplyCipher(changeInput.trim(), abc, -1*displacement);
+        		copy = applyCipher(changeInput.trim(), cba,cba, displacement);
                 System.out.println(copy);
         	}
-        }else {
+        }else if(splitInput[0].equalsIgnoreCase(">A") ||splitInput[0].equalsIgnoreCase("<A")){
+          if(splitInput[0].equalsIgnoreCase(">A")){
+                if(input.length() > 2){
+                    copy = applyCipher(input.substring(3), abc , rotor1);
+                    System.out.println(copy);
+                }else{
+                    if(copy.length() !=0){
+                        copy = applyCipher(copy, abc, rotor1);
+                        System.out.println(copy);
+                    }else{
+                        System.out.println("Error: Nothing Copied");
+                    }
+                }
+           }else{
+                if(input.length() > 2){
+                    copy = applyCipher(input.substring(3), rotor1, abc);
+                    System.out.println(copy);
+                }else{
+                    if(copy.length() !=0){
+                        copy = applyCipher(copy, rotor1,abc);
+                        System.out.println(copy);
+                    }else{
+                        System.out.println("Error: Nothing Copied");
+                    }
+                }
+          }
+        }else if(splitInput[0].equalsIgnoreCase(">R") ||splitInput[0].equalsIgnoreCase("<R")){
+          if(splitInput[0].equalsIgnoreCase(">R")){
+                if(input.length() > 2){
+                    copy = applyCipher(input.substring(3), abc , rotor1);
+                    System.out.println(copy);
+                }else{
+                    if(copy.length() !=0){
+                        copy = applyCipher(copy, abc, rotor1);
+                      	copy = applyCipher(copy, abc, rotor2);
+                      	copy = applyCipher(copy, abc, rotor3);
+                        System.out.println(copy);
+                    }else{
+                        System.out.println("Error: Nothing Copied");
+                    }
+                }
+           }else{
+                if(input.length() > 2){
+                    copy = applyCipher(input.substring(3), rotor1, abc);
+                    System.out.println(copy);
+                }else{
+                    if(copy.length() !=0){
+                        copy = applyCipher(copy, rotor3,abc);
+                      	copy = applyCipher(copy, rotor2,abc);
+                     	copy = applyCipher(copy, rotor1,abc);
+                        System.out.println(copy);
+                    }else{
+                        System.out.println("Error: Nothing Copied");
+                    }
+                }
+          }
+        }else{
         	System.out.println(input);
         }
         return copy;
@@ -137,11 +194,11 @@ public class Enigma{
         	if(!Character.isSpaceChar(a)) {
 	            int x = base.indexOf(a);
 	            if(x!= -1){
-	                output += cipher.charAt(((Math.abs((x+z)))%cipher.length()+y)%cipher.length()); 
+	                output += cipher.charAt((x+y)%cipher.length());
 	            }
 	            x = lbase.indexOf(a);
 	            if(x!= -1){
-	                output += lcipher.charAt(((Math.abs((x+z)))%cipher.length()+y)%cipher.length()); 
+	                output += lcipher.charAt((x+y)%cipher.length()); 
 	            }
         	}else {
         		output += a;
@@ -155,19 +212,19 @@ public class Enigma{
     }
     
     public static String applyCipher(String input, String cipher, int x){
-        return applyCipher(input,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", cipher, x);
+        return applyCipher(input,abc, cipher, x);
     }
     
     public static String applyCipher(String input, String cipher){
-        return applyCipher(input,"ABCDEFGHIJKLMNOPQRSTUVWXYZ", cipher);
+        return applyCipher(input,abc, cipher);
     }
 
     public static String unapplyCipher(String input, String cipher, int x){
-        return applyCipher(input, cipher, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", x);
+        return applyCipher(input, abc, cipher, x);
     }
     
     public static String unapplyCipher(String input, String cipher){
-        return applyCipher(input, cipher , "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        return applyCipher(input, cipher , abc);
     }
     
     public static String enigma(String[] rotors, int[] rotorshifts, String[] plugboard, String input) {
@@ -189,7 +246,7 @@ public class Enigma{
 	    		//plugboard
 	    		oChar = applyPlugboard(plugboard,oChar);
 		    	//right rotor
-	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]); //shift ochar up 3 in abc then down 3 after rotor change in abc
+	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]); //shift ochar up 3 in abc then down 3 after rotor change in abc test again
 		    	//middle rotor
 	    		oChar = applyRotor(rotors[1],oChar,rotorshifts[1]);
 		    	//left rotor
