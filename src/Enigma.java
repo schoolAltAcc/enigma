@@ -1,7 +1,7 @@
 //Artem S.
 //Period 7
 //Computer Science A
-//Enigma checkpoint 4
+//Enigma checkpoint 5
 
 import java.util.Scanner;
 import java.io.File;
