@@ -1,7 +1,7 @@
 //Artem S.
 //Period 7
 //Computer Science A
-//Enigma checkpoint 5
+//Enigma checkpoint 4
 
 import java.util.Scanner;
 import java.io.File;
@@ -146,6 +146,8 @@ public class Enigma{
           if(splitInput[0].equalsIgnoreCase(">R")){
                 if(input.length() > 2){
                     copy = applyCipher(input.substring(3), abc , rotor1);
+                  	copy = applyCipher(copy, abc, rotor2);
+                  	copy = applyCipher(copy, abc, rotor3);
                     System.out.println(copy);
                 }else{
                     if(copy.length() !=0){
@@ -159,7 +161,9 @@ public class Enigma{
                 }
            }else{
                 if(input.length() > 2){
-                    copy = applyCipher(input.substring(3), rotor1, abc);
+                    copy = applyCipher(input.substring(3), rotor3, abc);
+                  	copy = applyCipher(copy, rotor2,abc);
+                 	copy = applyCipher(copy, rotor1,abc);
                     System.out.println(copy);
                 }else{
                     if(copy.length() !=0){
@@ -184,11 +188,6 @@ public class Enigma{
         String lcipher = cipher.toLowerCase();
         if(base.length() != cipher.length()){
             return "Cipher Size Error";
-        }
-        int z = 0;
-        if(y < 0) {
-        	z = y;
-        	y=0;
         }
         for(Character a : input.toCharArray()){
         	if(!Character.isSpaceChar(a)) {
