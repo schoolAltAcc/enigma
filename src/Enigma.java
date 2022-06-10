@@ -19,17 +19,6 @@ public class Enigma{
     public static final String reflector = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
 	
 	public static void main(String[] args) throws FileNotFoundException{
-		String[] rotors = {rotor1,rotor5,rotor3};
-		int[] shifts = {abc.indexOf("C"),abc.indexOf("M"),abc.indexOf("S")};
-		String[] plugboard = {"QA","WS","ED","RF","TG","YH","UJ","IK","OL","MB"};
-		System.out.println(enigma(rotors,shifts,plugboard,"V"));
-		
-		// I III II E B C AB CD EF GH IJ KL MN OP QR ST E
-		String[] rotors2 = {rotor1,rotor3,rotor2};
-		int[] shifts2 = {abc.indexOf("E"),abc.indexOf("B"),abc.indexOf("C")};
-		String[] plugboard2 = {"AB","CD","EF","GH","IJ","KL","MN","OP","QR","ST"};
-		System.out.println(enigma(rotors2,shifts2,plugboard2,"E"));
-		
         Scanner in = new Scanner(System.in);
         System.out.println("Welcome to Enigma");
         String input = "";
@@ -47,9 +36,12 @@ public class Enigma{
     	String[] splitInput = input.split(" ");
         //move to method and make not c dependant so to not have this list of ifs every cipher
     	if(splitInput[0].equalsIgnoreCase("load")){
-    		File text = new File(splitInput[1]);
+    		File text = new File("C:\\Users\\2011828\\Desktop\\studentTestCases.txt");
+    		if(splitInput.length==2) {
+    			text = new File(splitInput[1]);
+    		}
     		if(text.exists()) {
-    			Scanner parser = new Scanner(text);//load C:\Users\2011828\Desktop\studentTestCases.txt
+    			Scanner parser = new Scanner(text);
 				do{
 		            System.out.print("Enter: ");
 		            input = parser.nextLine();
@@ -71,7 +63,8 @@ public class Enigma{
 		            System.out.println();
 		        }while(parser.hasNextLine());
 				parser.close();
-			}
+    		}
+			
     	}else if(splitInput[0].equalsIgnoreCase(">C") ||splitInput[0].equalsIgnoreCase("<C")){
             if(splitInput[0].equalsIgnoreCase(">C")){
                 if(input.length() > 2){
@@ -176,6 +169,55 @@ public class Enigma{
                     }
                 }
           }
+        }else if(splitInput.length == 17 || splitInput.length == 16) {
+        	String message = "";
+        	if(splitInput.length == 17) {
+        		message = splitInput[16];
+        	}else {
+        		message = copy;
+        	}
+        		//get rotors
+        		String[] rotors = new String[3];
+        		char[] notches = new char[3]; //third notch unnecessary
+        		for(int i = 0; i < 3; i++) {
+        			//switch case is just a fancy if so i thought i could use it cuz its simpler to understand
+        			switch(splitInput[i]) {
+        				case "I":
+        					rotors[i] = rotor1;
+        					notches[i] = 'R';
+        					break;//switch cases fall through so i need to use break, sorry.
+        				case "II":
+        					rotors[i] = rotor2;
+        					notches[i] = 'F';
+        					break;
+        				case "III":
+        					rotors[i] = rotor3;
+        					notches[i] = 'W';
+        					break;
+        				case "IV":
+        					rotors[i] = rotor4;
+        					notches[i] = 'K';
+        					break;
+        				case "V":
+        					rotors[i] = rotor5;
+        					notches[i] = 'A';
+        					break;
+        				default:
+        					System.out.println("Error, bad string on rotor " + (i+1)+", Defaulting to rotor I");
+        					rotors[i] = rotor1;
+        			}
+        		}
+        		//get shifts
+           		int[] shifts = {abc.indexOf(splitInput[3]),abc.indexOf(splitInput[4]),abc.indexOf(splitInput[5])};
+           		//get plugboard
+           		String[] plugboard = new String[9];
+           		for(int i = 6; i < 15;i++) {
+           			plugboard[i-6] = splitInput[i];
+           		}
+           		//get output
+           		copy = enigma(rotors,shifts,notches,plugboard,message);
+           		System.out.println(copy);
+        	
         }else{
         	System.out.println(input);
         }
@@ -206,6 +248,7 @@ public class Enigma{
         return output;
     }
     
+    //added these in the beginning but too scared to remove for simplicity
     public static String applyCipher(String input, String base, String cipher){
     	return applyCipher(input,base, cipher, 0);
     }
@@ -226,20 +269,19 @@ public class Enigma{
         return applyCipher(input, cipher , abc);
     }
     
-    public static String enigma(String[] rotors, int[] rotorshifts, String[] plugboard, String input) {
+    public static String enigma(String[] rotors, int[] rotorshifts, char[] notches , String[] plugboard, String input) {
     	String output = "";
     	//for every char
     	for(Character c : input.toCharArray()) {
     		Character oChar = c;
     		if(!Character.isSpaceChar(c)) {
 	    		//right hand rotor += 1 shift with logic for passing notch onto next rotors
+    			//change 26 to rotor length?
 	    		rotorshifts[2]++;
-	    		if(rotorshifts[2]%26 == 0) {
+	    		if(rotors[2].charAt(rotorshifts[2]%26) == notches[2]) {
 	    			rotorshifts[1]++;
-	    			rotorshifts[2] = 0;
-	    			if(rotorshifts[1]%26 == 0) {
+	    			if(rotors[1].charAt(rotorshifts[1]%26) == notches[1]) {
 						rotorshifts[0]++;
-		    			rotorshifts[1] = 0;
 	    			}
 	    		}
 	    		//plugboard
@@ -268,11 +310,11 @@ public class Enigma{
 
 	public static Character applyRotor(String rotor, Character oChar, int rotorshifts) {
 		//up rotor shift letter acording to abc
-		int x = (abc.indexOf(oChar)+rotorshifts)%abc.length();
+		int x = (abc.indexOf(oChar)+(rotorshifts%abc.length()))%abc.length();
 		//letter through rotor
 		oChar = rotor.charAt(x);
 		//letter down shift through abc
-		oChar = cba.charAt((cba.indexOf(oChar)+rotorshifts)%cba.length());
+		oChar = cba.charAt((cba.indexOf(oChar)+(rotorshifts%cba.length()))%cba.length());
 		return oChar;
 	}
 
