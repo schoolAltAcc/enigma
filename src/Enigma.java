@@ -1,7 +1,7 @@
 //Artem S.
 //Period 7
 //Computer Science A
-//Enigma checkpoint 4
+//Enigma checkpoint 6 with NO extra credit (maybe will do some later)
 
 import java.util.Scanner;
 import java.io.File;
@@ -35,8 +35,11 @@ public class Enigma{
     public static String parseInput(String input,String copy) throws FileNotFoundException {
     	String[] splitInput = input.split(" ");
         //move to method and make not c dependant so to not have this list of ifs every cipher
+        //file load for school C:\\Users\\2011828\\Desktop\\studentTestCases.txt
+        //file load for home C:\Users\wilty\Desktop\coding\java2\studentTestCases
     	if(splitInput[0].equalsIgnoreCase("load")){
-    		File text = new File("C:\\Users\\2011828\\Desktop\\studentTestCases.txt");
+    		System.out.println(System.getProperty("user.dir")+"\\studentTestCases.txt");
+    		File text = new File(System.getProperty("user.dir")+"\\studentTestCases.txt");
     		if(splitInput.length==2) {
     			text = new File(splitInput[1]);
     		}
@@ -210,8 +213,8 @@ public class Enigma{
         		//get shifts
            		int[] shifts = {abc.indexOf(splitInput[3]),abc.indexOf(splitInput[4]),abc.indexOf(splitInput[5])};
            		//get plugboard
-           		String[] plugboard = new String[9];
-           		for(int i = 6; i < 15;i++) {
+           		String[] plugboard = new String[10];
+           		for(int i = 6; i < 16;i++) {
            			plugboard[i-6] = splitInput[i];
            		}
            		//get output
@@ -269,21 +272,33 @@ public class Enigma{
         return applyCipher(input, cipher , abc);
     }
     
-    public static String enigma(String[] rotors, int[] rotorshifts, char[] notches , String[] plugboard, String input) {
+    @SuppressWarnings("unused")
+	public static String enigma(String[] rotors, int[] rotorshifts, char[] notches , String[] plugboard, String input) {
     	String output = "";
     	//for every char
     	for(Character c : input.toCharArray()) {
     		Character oChar = c;
     		if(!Character.isSpaceChar(c)) {
 	    		//right hand rotor += 1 shift with logic for passing notch onto next rotors
-    			//change 26 to rotor length?
 	    		rotorshifts[2]++;
-	    		if(rotors[2].charAt(rotorshifts[2]%26) == notches[2]) {
-	    			rotorshifts[1]++;
-	    			if(rotors[1].charAt(rotorshifts[1]%26) == notches[1]) {
-						rotorshifts[0]++;
-	    			}
+	    		//extra credit unused code for notches and double stepping
+	    		if(false) {
+		    		//notches
+		    		if(rotors[2].charAt(rotorshifts[2]%26) == notches[2]) {
+		    			rotorshifts[1]++;
+		    			if(rotors[1].charAt(rotorshifts[1]%26) == notches[1]) {
+							rotorshifts[0]++;
+		    			}
+	                //double step implementation
+		    		}else if(rotors[1].charAt((rotorshifts[1]+1)%26) == notches[1]){
+	                    rotorshifts[1]++;
+		    			rotorshifts[0]++;
+	                }
 	    		}
+                //temp fix for nonexistant problem, remove later
+                for(int i = 0; i < rotorshifts.length; i++){
+                    rotorshifts[i] = rotorshifts[i]%26;
+                }
 	    		//plugboard
 	    		oChar = applyPlugboard(plugboard,oChar);
 		    	//right rotor
@@ -295,11 +310,11 @@ public class Enigma{
 		    	//reflector
 	    		oChar = applyRotor(reflector,oChar,0);
 		    	//left rotor
-	    		oChar = applyRotor(rotors[0],oChar,rotorshifts[0]);
+	    		oChar = unapplyRotor(rotors[0],oChar,rotorshifts[0]);
 		    	//middle rotor
-	    		oChar = applyRotor(rotors[1],oChar,rotorshifts[1]);
+	    		oChar = unapplyRotor(rotors[1],oChar,rotorshifts[1]);
 		    	//right rotor
-	    		oChar = applyRotor(rotors[2],oChar,rotorshifts[2]);
+	    		oChar = unapplyRotor(rotors[2],oChar,rotorshifts[2]);
 		    	//plugboard
 	    		oChar = applyPlugboard(plugboard,oChar);
     		}
@@ -308,19 +323,31 @@ public class Enigma{
     	return output;
     }
 
-	public static Character applyRotor(String rotor, Character oChar, int rotorshifts) {
+	public static Character applyRotor(String rotor, Character oChar, int rotorshift) {
 		//up rotor shift letter acording to abc
-		int x = (abc.indexOf(oChar)+(rotorshifts%abc.length()))%abc.length();
-		//letter through rotor
+		int x = (abc.indexOf(oChar)+(rotorshift))%26;
+		//find letter in rotor
 		oChar = rotor.charAt(x);
 		//letter down shift through abc
-		oChar = cba.charAt((cba.indexOf(oChar)+(rotorshifts%cba.length()))%cba.length());
+		oChar = cba.charAt((cba.indexOf(oChar)+(rotorshift))%26);
 		return oChar;
 	}
 
+    public static Character unapplyRotor(String rotor, Character oChar, int rotorshift) {
+		//up rotor shift letter acording to abc
+		int x = (abc.indexOf(oChar)+(rotorshift))%26;
+		//find letter in rotor
+		oChar = (char)(rotor.indexOf((char)(x+65))+65);
+		//letter down shift through abc
+		oChar = cba.charAt((cba.indexOf(oChar)+(rotorshift))%26);
+		return oChar;
+	}
+	
 	public static Character applyPlugboard(String[] plugboard, Character oChar) {
 		Character out = oChar;
+        //for pair of plugboard settings
 		for(String plug : plugboard) {
+            //if char equal to a char in plug then set char other char in plug
 			if(plug.charAt(0) == oChar) {
 				out = plug.charAt(1);
 			}else if(plug.charAt(1)== oChar){
